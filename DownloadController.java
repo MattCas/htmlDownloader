@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,8 +31,19 @@ public class DownloadController {
 
 	}
 	public static void initializeUrl(){
-		//get URL from user
-		address = "http://www.cs.bham.ac.uk/~dehghanh/vision_files/lab/lab4/"; // Temporary	
+		//Retrieve URL from User using JTextField
+		JTextField u = new JTextField(50);
+		u.setText("http://www.cs.bham.ac.uk/~dehghanh/vision_files/lab/lab4/");
+		int uAction = JOptionPane.showConfirmDialog(null, u, "Enter the URL", JOptionPane.OK_CANCEL_OPTION);
+		if (uAction > 0){
+			//Error if user cancelled
+			JOptionPane.showMessageDialog(null, "User cancelled the operation 'Enter URL'", "Quitting", JOptionPane.INFORMATION_MESSAGE);
+			System.exit(0);
+		}
+		else{
+			address = new String (u.getText());
+		}
+		
 		//store the page as an HTML document 
 		try {
 			doc = Jsoup.connect(address).get();
@@ -61,8 +75,18 @@ public class DownloadController {
 
 	public static void retrieveLocation(){
 		//Get destination folder from user
-		dest = "/Users/macbookpro/Desktop/Test/"; //For now
-
+		//Retrieve URL from User using JTextField
+		JTextField u = new JTextField(50);
+		u.setText("/Users/macbookpro/Desktop/Test/");
+		int uAction = JOptionPane.showConfirmDialog(null, u, "Enter the path where the files will be saved", JOptionPane.OK_CANCEL_OPTION);
+		if (uAction > 0){
+			//Error if user cancelled
+			JOptionPane.showMessageDialog(null, "User cancelled the operation 'Enter URL'", "Quitting", JOptionPane.INFORMATION_MESSAGE);
+			System.exit(0);
+		}
+		else{
+			dest = new String (u.getText());
+		}
 	}
 
 }
