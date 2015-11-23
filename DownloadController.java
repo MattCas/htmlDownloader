@@ -15,22 +15,43 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * The Download Controller
+ */
 public class DownloadController {
-	public static String address = null;
-	public static String dest = null;
-	public static Document doc;
-	public static String extensions; //= "pdf|jpe?g" ; // remember to separate them with |
 
+	/** The web address from which filed will be downloaded. */
+	public static String address = null;
+
+	/** The destination folder where the files will be saved. */
+	public static String dest = null;
+
+	/** The parsed contents of the webpage in HTML. */
+	public static Document doc;
+
+	/** The file extensions specified by the user to be downloaded. */
+	public static String extensions; 
+
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		retrieveLocation();
 		retrieveExtensions();
 		initializeUrl();
+		download();
 		//parse page
 		//retrieve links
 		//add links to job list
 		//save to specified location
 
 	}
+
+	/**
+	 * Takes in the url and assigns it to the variable <code>address</code>
+	 */
 	public static void initializeUrl(){
 		//Retrieve URL from User using JTextField
 		JTextField u = new JTextField(50);
@@ -44,7 +65,12 @@ public class DownloadController {
 		else{
 			address = new String (u.getText());
 		}
+	}
 
+	/**
+	 * Parses webpage, filters out and downloads required files.
+	 */
+	public static void download(){
 		//store the page as an HTML document 
 		try {
 			doc = Jsoup.connect(address).get();
@@ -74,6 +100,9 @@ public class DownloadController {
 
 	}
 
+	/**
+	 * Takes in the destination path and assigns it to the variable <code>dest</code>.
+	 */
 	public static void retrieveLocation(){
 		//Get destination folder from user
 		JTextField u = new JTextField(50);
@@ -89,6 +118,9 @@ public class DownloadController {
 		}
 	}
 
+	/**
+	 * Takes in the file extensions string and assigns it to the variable <code>extensions</code>.
+	 */
 	public static void retrieveExtensions(){
 		//Get file extensions for filtering from user
 		JTextField u = new JTextField(50);
