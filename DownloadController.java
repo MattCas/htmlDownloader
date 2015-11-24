@@ -8,10 +8,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -44,21 +42,16 @@ public class DownloadController {
 		retrieveExtensions();
 		initializeUrl();
 		download();
-		//parse page
-		//retrieve links
-		//add links to job list
-		//save to specified location
-
 	}
 
 	/**
-	 * Anonymous class to create downloader threads
+	 * Method containing anonymous class. Its used to create downloader threads.
 	 */
-
 	private static Runnable download(final String dLink, final String fileName, final String destination){
 
 		Runnable downloaderThread = new Runnable(){
 			public void run(){
+				System.out.println(Thread.currentThread().getName()+ " is downloading " + fileName);
 				try {
 					//Open a URL Stream
 					URL url = new URL(dLink);
@@ -69,13 +62,13 @@ public class DownloadController {
 					}
 					out.close();
 					in.close();
+					System.out.println(fileName + " has been downloaded.");
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		};
-
 		return downloaderThread;
 	}
 
@@ -111,11 +104,11 @@ public class DownloadController {
 			for (Element file: f2d){
 				String fName = file.attr("href");
 				String link = (address + fName);
-				System.out.println(link);
 				//create downloader threads for each file
 				Runnable downObj = download(link, fName, dest);
 				//add each file to the queue
 				pool.execute(downObj);
+				System.out.println(fName + " was added to the download queue.");
 
 			}
 			System.out.println(f2d.size() + " file(s) to download");
