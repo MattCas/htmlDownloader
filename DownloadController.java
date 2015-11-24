@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -50,6 +52,34 @@ public class DownloadController {
 	}
 
 	/**
+	 * Anonymous class to create downloader threads
+	 */
+
+	private static Runnable download(final String dLink, final String fileName, final String destination){
+
+		Runnable downloaderThread = new Runnable(){
+			public void run(){
+				try {
+					//Open a URL Stream
+					URL url = new URL(dLink);
+					InputStream in = url.openStream();
+					OutputStream out = new BufferedOutputStream(new FileOutputStream( dest + fileName));
+					for (int b; (b = in.read()) != -1;) {
+						out.write(b);
+					}
+					out.close();
+					in.close();
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		return downloaderThread;
+	}
+
+	/**
 	 * Takes in the url and assigns it to the variable <code>address</code>
 	 */
 	public static void initializeUrl(){
@@ -71,6 +101,8 @@ public class DownloadController {
 	 * Parses webpage, filters out and downloads required files.
 	 */
 	public static void download(){
+		//Create thread pool with 3 threads
+		ExecutorService pool = Executors.newFixedThreadPool(3);
 		//store the page as an HTML document 
 		try {
 			doc = Jsoup.connect(address).get();
@@ -80,24 +112,17 @@ public class DownloadController {
 				String fName = file.attr("href");
 				String link = (address + fName);
 				System.out.println(link);
+				//create downloader threads for each file
+				Runnable downObj = download(link, fName, dest);
 				//add each file to the queue
-
-				//Open a URL Stream
-				URL url = new URL(link);
-				InputStream in = url.openStream();
-				OutputStream out = new BufferedOutputStream(new FileOutputStream( dest + fName));
-				for (int b; (b = in.read()) != -1;) {
-					out.write(b);
-				}
-				out.close();
-				in.close();
+				pool.execute(downObj);
 
 			}
 			System.out.println(f2d.size() + " file(s) to download");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		pool.shutdown();
 	}
 
 	/**
